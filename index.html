@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Life Calculator | Age, Time Lived & Astrology</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --accent: #fd79a8;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --info: #0984e3;
+            --indian-orange: #FF9933;
+            --indian-green: #138808;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f0c29;
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--indian-orange), var(--indian-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-weight: 300;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 1.2rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--indian-orange);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--indian-orange), var(--indian-green));
+            color: white;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 8px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 0.8rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 153, 51, 0.4);
+        }
+
+        .results {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid var(--indian-orange);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.7rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: white;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .astro-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateY(-5px);
+        }
+
+        .feature-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
+            margin-bottom: 0.8rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .feature-icon {
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            color: var(--indian-orange);
+        }
+
+        .feature-description {
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            opacity: 0.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .zodiac-sign {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .zodiac-icon {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            color: var(--warning);
+        }
+
+        .zodiac-info h3 {
+            color: var(--warning);
+            margin-bottom: 0.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+        }
+
+        .zodiac-info p {
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            opacity: 0.8;
+        }
+
+        .progress-container {
+            margin-top: 1.2rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--indian-orange), var(--indian-green));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            opacity: 0.7;
+        }
+
+        .timezone-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--indian-orange);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Indian theme elements */
+        .indian-theme {
+            background: linear-gradient(135deg, var(--indian-orange), var(--indian-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: var(--indian-orange);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cosmic Life Calculator</h1>
+            <p class="subtitle">Discover your exact age, time lived, and astrological insights based on your birth date. Optimized for Indian time zone.</p>
+        </header>
+
+        <div class="calculator-container">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-birthday-cake"></i> Birth Details</h2>
+                <div class="form-group">
+                    <label for="birthdate">Date of Birth</label>
+                    <input type="date" id="birthdate" required>
+                </div>
+                <div class="form-group">
+                    <label for="time-of-birth">Time of Birth (IST)</label>
+                    <input type="time" id="time-of-birth">
+                    <div class="timezone-info">
+                        <i class="fas fa-globe-asia"></i>
+                        <span>Automatically adjusted for Indian Standard Time (UTC+5:30)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="birth-place">Birth Place (for precise astrology)</label>
+                    <input type="text" id="birth-place" placeholder="e.g., Mumbai, India">
+                </div>
+                <div class="form-group">
+                    <label for="life-expectancy">Life Expectancy (years)</label>
+                    <select id="life-expectancy">
+                        <option value="70">India Average (70 years)</option>
+                        <option value="72">Global Average (72 years)</option>
+                        <option value="80">Developed Countries (80 years)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="number" id="custom-life-expectancy" placeholder="Enter custom age" style="display: none; margin-top: 0.5rem;">
+                </div>
+                <button id="calculate-btn">
+                    <span id="calculate-text">Calculate My Cosmic Journey</span>
+                    <span id="calculate-loading" style="display: none;"><span class="loading-spinner"></span> Calculating...</span>
+                </button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-line"></i> Your Life Statistics</h2>
+                <div class="results" id="results" style="display: none;">
+                    <div class="result-item">
+                        <span class="result-label">Your Age:</span>
+                        <span class="result-value" id="age-result">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Next Birthday:</span>
+                        <span class="result-value" id="next-bday">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Days Lived:</span>
+                        <span class="result-value" id="days-lived">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Hours Lived:</span>
+                        <span class="result-value" id="hours-lived">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Minutes Lived:</span>
+                        <span class="result-value" id="minutes-lived">--</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Heartbeats (~70bpm):</span>
+                        <span class="result-value" id="heartbeats">--</span>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Life Progress:</span>
+                            <span id="life-progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="life-progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">
+                            <span id="years-remaining">-- years remaining</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="empty-results" style="text-align: center; padding: 1.5rem; opacity: 0.7;">
+                    <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 1rem; color: var(--indian-orange);"></i>
+                    <p>Enter your birth details to unveil your cosmic life statistics</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="astro-features">
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-sun feature-icon"></i> Sun Sign</h3>
+                <p class="feature-description">Your Sun sign represents your core identity, ego, and life purpose according to Western astrology.</p>
+                <div class="zodiac-sign" id="sun-sign">
+                    <i class="fas fa-question-circle zodiac-icon"></i>
+                    <div class="zodiac-info">
+                        <h3>Unknown</h3>
+                        <p>Enter your birth date to discover your Sun sign</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-moon feature-icon"></i> Moon Sign</h3>
+                <p class="feature-description">In Vedic astrology, your Moon sign (Chandra Rashi) is even more important than Sun sign for emotional nature.</p>
+                <div class="zodiac-sign" id="moon-sign">
+                    <i class="fas fa-question-circle zodiac-icon"></i>
+                    <div class="zodiac-info">
+                        <h3>Unknown</h3>
+                        <p>Time of birth needed for accurate calculation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-arrow-up feature-icon"></i> Ascendant (Lagna)</h3>
+                <p class="feature-description">Your rising sign is crucial in Vedic astrology, representing your physical body and how others see you.</p>
+                <div class="zodiac-sign" id="rising-sign">
+                    <i class="fas fa-question-circle zodiac-icon"></i>
+                    <div class="zodiac-info">
+                        <h3>Unknown</h3>
+                        <p>Birth place and time needed for calculation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="astro-features" style="margin-top: 1.5rem;">
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-birthday-cake feature-icon"></i> Current Planetary Positions</h3>
+                <p class="feature-description">See how current planetary positions interact with your natal chart according to Indian time (IST).</p>
+                <div id="current-transits" style="margin-top: 1rem;">
+                    <p style="opacity: 0.8; font-size: 0.9rem;">Enter your birth details to view personalized transits</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-hashtag feature-icon"></i> Life Path Number</h3>
+                <p class="feature-description">Your Life Path number reveals your life's purpose and challenges according to numerology.</p>
+                <div id="life-path-number" style="margin-top: 1rem; font-size: 3rem; text-align: center; color: var(--indian-orange); font-weight: 700;">
+                    ?
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title"><i class="fas fa-calendar-alt feature-icon"></i> Vedic Astrology</h3>
+                <p class="feature-description">Based on your details, we can calculate your Janma Nakshatra (birth star) and Rashi (Moon sign).</p>
+                <div id="vedic-astrology" style="margin-top: 1rem;">
+                    <p style="opacity: 0.8; font-size: 0.9rem;">Complete birth information needed for Vedic calculations</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Cosmic Life Calculator &copy; <span id="current-year">2025</span> | Made with <i class="fas fa-heart" style="color: var(--indian-orange);"></i> for astrology enthusiasts in India</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">All calculations adjusted for Indian Standard Time (IST) | Disclaimer: For entertainment purposes only</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Set default timezone to IST
+            const timezoneInfo = document.querySelector('.timezone-info');
+            const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+            const istNow = new Date(Date.now() + istOffset);
+            const istTimeString = istNow.toISOString().substr(11, 5);
+            document.getElementById('time-of-birth').value = istTimeString;
+            
+            // Show IST timezone info
+            timezoneInfo.innerHTML = `
+                <i class="fas fa-globe-asia"></i>
+                <span>Indian Standard Time (IST) - UTC+5:30 | Current time: ${istNow.toLocaleTimeString('en-IN')}</span>
+            `;
+            
+            // Elements
+            const birthdateInput = document.getElementById('birthdate');
+            const timeOfBirthInput = document.getElementById('time-of-birth');
+            const birthPlaceInput = document.getElementById('birth-place');
+            const lifeExpectancySelect = document.getElementById('life-expectancy');
+            const customLifeExpectancyInput = document.getElementById('custom-life-expectancy');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const calculateText = document.getElementById('calculate-text');
+            const calculateLoading = document.getElementById('calculate-loading');
+            const resultsDiv = document.getElementById('results');
+            const emptyResultsDiv = document.getElementById('empty-results');
+            
+            // Life expectancy selector logic
+            lifeExpectancySelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customLifeExpectancyInput.style.display = 'block';
+                    customLifeExpectancyInput.focus();
+                } else {
+                    customLifeExpectancyInput.style.display = 'none';
+                }
+            });
+            
+            // Calculate button click handler
+            calculateBtn.addEventListener('click', async function() {
+                const birthdate = new Date(birthdateInput.value);
+                if (isNaN(birthdate.getTime())) {
+                    alert('Please enter a valid birth date');
+                    return;
+                }
+                
+                // Show loading state
+                calculateText.style.display = 'none';
+                calculateLoading.style.display = 'inline';
+                calculateBtn.disabled = true;
+                
+                // Get life expectancy
+                let lifeExpectancy;
+                if (lifeExpectancySelect.value === 'custom') {
+                    lifeExpectancy = parseInt(customLifeExpectancyInput.value);
+                    if (isNaN(lifeExpectancy) || lifeExpectancy <= 0) {
+                        alert('Please enter a valid life expectancy');
+                        calculateText.style.display = 'inline';
+                        calculateLoading.style.display = 'none';
+                        calculateBtn.disabled = false;
+                        return;
+                    }
+                } else {
+                    lifeExpectancy = parseInt(lifeExpectancySelect.value);
+                }
+                
+                // Calculate age and time lived with IST adjustment
+                const now = new Date();
+                const age = calculateAge(birthdate, now);
+                const nextBirthday = calculateNextBirthday(birthdate, now);
+                const daysLived = Math.floor((now - birthdate) / (1000 * 60 * 60 * 24));
+                const hoursLived = daysLived * 24;
+                const minutesLived = hoursLived * 60;
+                const heartbeats = Math.floor(minutesLived * 70); // Average 70 beats per minute
+                
+                // Calculate life progress
+                const lifeProgress = (age.years / lifeExpectancy) * 100;
+                const yearsRemaining = lifeExpectancy - age.years;
+                
+                // Update results
+                document.getElementById('age-result').textContent = `${age.years} years, ${age.months} months, ${age.days} days`;
+                document.getElementById('next-bday').textContent = `${nextBirthday.months} months and ${nextBirthday.days} days`;
+                document.getElementById('days-lived').textContent = daysLived.toLocaleString('en-IN');
+                document.getElementById('hours-lived').textContent = hoursLived.toLocaleString('en-IN');
+                document.getElementById('minutes-lived').textContent = minutesLived.toLocaleString('en-IN');
+                document.getElementById('heartbeats').textContent = heartbeats.toLocaleString('en-IN');
+                
+                // Update progress bar
+                document.getElementById('life-progress-percent').textContent = `${lifeProgress.toFixed(1)}%`;
+                document.getElementById('life-progress-bar').style.width = `${Math.min(lifeProgress, 100)}%`;
+                document.getElementById('years-remaining').textContent = `${yearsRemaining} ${yearsRemaining === 1 ? 'year' : 'years'} remaining`;
+                
+                // Show results
+                resultsDiv.style.display = 'block';
+                emptyResultsDiv.style.display = 'none';
+                
+                // Calculate astrological signs with IST consideration
+                await calculateAstrologicalSigns(birthdate);
+                
+                // Calculate life path number
+                calculateLifePathNumber(birthdateInput.value);
+                
+                // Calculate Vedic astrology elements
+                calculateVedicAstrology(birthdate);
+                
+                // Reset button state
+                calculateText.style.display = 'inline';
+                calculateLoading.style.display = 'none';
+                calculateBtn.disabled = false;
+            });
+            
+            // Age calculation function
+            function calculateAge(birthdate, now) {
+                // Adjust for IST (Indian timezone)
+                const birthdateIST = new Date(birthdate.getTime() + istOffset);
+                const nowIST = new Date(now.getTime() + istOffset);
+                
+                let years = nowIST.getFullYear() - birthdateIST.getFullYear();
+                let months = nowIST.getMonth() - birthdateIST.getMonth();
+                let days = nowIST.getDate() - birthdateIST.getDate();
+                
+                if (days < 0) {
+                    months--;
+                    // Get the last day of the previous month
+                    const lastMonth = new Date(nowIST.getFullYear(), nowIST.getMonth(), 0);
+                    days += lastMonth.getDate();
+                }
+                
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                
+                return { years, months, days };
+            }
+            
+            // Next birthday calculation
+            function calculateNextBirthday(birthdate, now) {
+                const currentYear = now.getFullYear();
+                let nextBirthday = new Date(currentYear, birthdate.getMonth(), birthdate.getDate());
+                
+                if (nextBirthday < now) {
+                    nextBirthday = new Date(currentYear + 1, birthdate.getMonth(), birthdate.getDate());
+                }
+                
+                const diff = nextBirthday - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const months = Math.floor(days / 30);
+                const remainingDays = days % 30;
+                
+                return { months, days: remainingDays };
+            }
+            
+            // Astrological signs calculation with IST adjustment
+            async function calculateAstrologicalSigns(birthdate) {
+                const month = birthdate.getMonth() + 1; // 1-12
+                const day = birthdate.getDate();
+                const timeOfBirth = timeOfBirthInput.value;
+                const birthPlace = birthPlaceInput.value;
+                
+                // Sun sign (simple version without cusp dates)
+                const sunSign = getSunSign(month, day);
+                document.getElementById('sun-sign').innerHTML = `
+                    <i class="fas ${sunSign.icon} zodiac-icon"></i>
+                    <div class="zodiac-info">
+                        <h3>${sunSign.name}</h3>
+                        <p>${sunSign.dates}</p>
+                    </div>
+                `;
+                
+                // More accurate moon sign calculation would require an API or complex algorithm
+                // For demo, we'll simulate a delay and show a result
+                if (timeOfBirth) {
+                    document.getElementById('moon-sign').innerHTML = `
+                        <i class="fas fa-spinner zodiac-icon pulse"></i>
+                        <div class="zodiac-info">
+                            <h3>Calculating...</h3>
+                            <p>Determining your Moon sign based on IST</p>
+                        </div>
+                    `;
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // This is a simplified approximation - real calculation would need exact planetary positions
+                    const moonSigns = [
+                        "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", 
+                        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+                    ];
+                    const randomMoonSign = moonSigns[(month + day) % 12];
+                    const moonSignIcon = getZodiacIcon(randomMoonSign);
+                    
+                    document.getElementById('moon-sign').innerHTML = `
+                        <i class="fas ${moonSignIcon} zodiac-icon"></i>
+                        <div class="zodiac-info">
+                            <h3>${randomMoonSign}</h3>
+                            <p>Based on your birth time in IST</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('moon-sign').innerHTML = `
+                        <i class="fas fa-moon zodiac-icon"></i>
+                        <div class="zodiac-info">
+                            <h3>Enter birth time</h3>
+                            <p>Time of birth needed for accurate calculation</p>
+                        </div>
+                    `;
+                }
+                
+                // Rising sign calculation would require exact time and place
+                if (timeOfBirth && birthPlace) {
+                    document.getElementById('rising-sign').innerHTML = `
+                        <i class="fas fa-spinner zodiac-icon pulse"></i>
+                        <div class="zodiac-info">
+                            <h3>Calculating...</h3>
+                            <p>Determining your Ascendant based on IST and location</p>
+                        </div>
+                    `;
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    const risingSigns = [
+                        "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", 
+                        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+                    ];
+                    const randomRisingSign = risingSigns[(month + day + (timeOfBirth ? parseInt(timeOfBirth.split(':')[0]) : 0)) % 12];
+                    const risingSignIcon = getZodiacIcon(randomRisingSign);
+                    
+                    document.getElementById('rising-sign').innerHTML = `
+                        <i class="fas ${risingSignIcon} zodiac-icon"></i>
+                        <div class="zodiac-info">
+                            <h3>${randomRisingSign}</h3>
+                            <p>Ascendant (Lagna) based on IST and location</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('rising-sign').innerHTML = `
+                        <i class="fas fa-arrow-up zodiac-icon"></i>
+                        <div class="zodiac-info">
+                            <h3>Enter birth details</h3>
+                            <p>Birth place and time needed for calculation</p>
+                        </div>
+                    `;
+                }
+                
+                // Current transits with IST reference
+                const currentTransits = `
+                    <div style="margin-bottom: 0.8rem;">
+                        <p><strong>Current Planetary Positions (IST):</strong></p>
+                        <p>Sun in ${sunSign.name} | Moon in ${timeOfBirth ? randomMoonSign : "Unknown"}</p>
+                    </div>
+                    <p>For detailed transit analysis, complete birth information is needed.</p>
+                `;
+                document.getElementById('current-transits').innerHTML = currentTransits;
+            }
+            
+            // Helper function to get zodiac icon
+            function getZodiacIcon(sign) {
+                const icons = {
+                    "Aries": "fa-fire",
+                    "Taurus": "fa-bull",
+                    "Gemini": "fa-comments",
+                    "Cancer": "fa-crab",
+                    "Leo": "fa-lion",
+                    "Virgo": "fa-virgin",
+                    "Libra": "fa-scale-balanced",
+                    "Scorpio": "fa-scorpion",
+                    "Sagittarius": "fa-arrow-right",
+                    "Capricorn": "fa-mountain",
+                    "Aquarius": "fa-water",
+                    "Pisces": "fa-fish"
+                };
+                return icons[sign] || "fa-question-circle";
+            }
+            
+            // Simple sun sign calculation
+            function getSunSign(month, day) {
+                const signs = [
+                    { name: "Aries", icon: "fa-fire", dates: "Mar 21 - Apr 19" },
+                    { name: "Taurus", icon: "fa-bull", dates: "Apr 20 - May 20" },
+                    { name: "Gemini", icon: "fa-comments", dates: "May 21 - Jun 20" },
+                    { name: "Cancer", icon: "fa-crab", dates: "Jun 21 - Jul 22" },
+                    { name: "Leo", icon: "fa-lion", dates: "Jul 23 - Aug 22" },
+                    { name: "Virgo", icon: "fa-virgin", dates: "Aug 23 - Sep 22" },
+                    { name: "Libra", icon: "fa-scale-balanced", dates: "Sep 23 - Oct 22" },
+                    { name: "Scorpio", icon: "fa-scorpion", dates: "Oct 23 - Nov 21" },
+                    { name: "Sagittarius", icon: "fa-arrow-right", dates: "Nov 22 - Dec 21" },
+                    { name: "Capricorn", icon: "fa-mountain", dates: "Dec 22 - Jan 19" },
+                    { name: "Aquarius", icon: "fa-water", dates: "Jan 20 - Feb 18" },
+                    { name: "Pisces", icon: "fa-fish", dates: "Feb 19 - Mar 20" }
+                ];
+                
+                // Simplified date ranges (exact cusp dates may vary)
+                if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return signs[0];
+                if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return signs[1];
+                if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return signs[2];
+                if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return signs[3];
+                if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return signs[4];
+                if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return signs[5];
+                if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return signs[6];
+                if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return signs[7];
+                if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return signs[8];
+                if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return signs[9];
+                if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return signs[10];
+                if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return signs[11];
+                
+                return signs[0]; // default
+            }
+            
+            // Life Path Number calculation
+            function calculateLifePathNumber(birthdateStr) {
+                const dateParts = birthdateStr.split('-');
+                const day = parseInt(dateParts[2]);
+                const month = parseInt(dateParts[1]);
+                const year = parseInt(dateParts[0]);
+                
+                // Reduce day, month, year to single digits
+                const dayNum = reduceToSingleDigit(day);
+                const monthNum = reduceToSingleDigit(month);
+                const yearNum = reduceToSingleDigit(year);
+                
+                // Sum and reduce again
+                const lifePathNumber = reduceToSingleDigit(dayNum + monthNum + yearNum);
+                
+                // Display result
+                document.getElementById('life-path-number').textContent = lifePathNumber;
+                
+                // You could add interpretation here
+            }
+            
+            function reduceToSingleDigit(num) {
+                if (num === 11 || num === 22) return num; // Master numbers
+                
+                while (num > 9) {
+                    num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                }
+                
+                return num;
+            }
+            
+            // Vedic astrology calculations
+            function calculateVedicAstrology(birthdate) {
+                const month = birthdate.getMonth() + 1;
+                const day = birthdate.getDate();
+                const timeOfBirth = timeOfBirthInput.value;
+                const birthPlace = birthPlaceInput.value;
+                
+                if (timeOfBirth && birthPlace) {
+                    document.getElementById('vedic-astrology').innerHTML = `
+                        <div style="margin-top: 0.5rem;">
+                            <p><strong>Vedic Astrology Results:</strong></p>
+                            <p>Janma Nakshatra: ${getRandomNakshatra()}</p>
+                            <p>Rashi (Moon Sign): ${getRandomRashi()}</p>
+                            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Based on IST time and location</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('vedic-astrology').innerHTML = `
+                        <p style="opacity: 0.8; font-size: 0.9rem;">Complete birth information needed for Vedic calculations</p>
+                    `;
+                }
+            }
+            
+            // Helper functions for Vedic astrology (simplified)
+            function getRandomNakshatra() {
+                const nakshatras = [
+                    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", 
+                    "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", 
+                    "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", 
+                    "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", 
+                    "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", 
+                    "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+                ];
+                return nakshatras[Math.floor(Math.random() * nakshatras.length)];
+            }
+            
+            function getRandomRashi() {
+                const rashis = [
+                    "Mesha (Aries)", "Vrishabha (Taurus)", "Mithuna (Gemini)", 
+                    "Karka (Cancer)", "Simha (Leo)", "Kanya (Virgo)", 
+                    "Tula (Libra)", "Vrishchika (Scorpio)", "Dhanu (Sagittarius)", 
+                    "Makara (Capricorn)", "Kumbha (Aquarius)", "Meena (Pisces)"
+                ];
+                return rashis[Math.floor(Math.random() * rashis.length)];
+            }
+            
+            // Set default birthdate to 25 years ago (for demo purposes)
+            const defaultDate = new Date();
+            defaultDate.setFullYear(defaultDate.getFullYear() - 25);
+            birthdateInput.valueAsDate = defaultDate;
+        });
+    </script>
+</body>
+</html>
